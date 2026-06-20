@@ -42,6 +42,8 @@ export type BadgeType =
 
 export type Currency = 'XAF' | 'XOF' | 'USD' | 'EUR'
 
+export type ProductType = 'physical' | 'digital'
+
 export type PaymentMethod = 'mtn_momo' | 'orange_money' | 'card' | 'bank_transfer'
 
 export type RecipientType = 'platform' | 'creator' | 'seller'
@@ -82,7 +84,13 @@ export interface Product {
   price: number
   commission_rate: number
   status: ProductStatus
+  product_type: ProductType 
   stock_count: number
+  weight_grams?: number            
+  requires_shipping: boolean       
+  file_url?: string                
+  file_size_mb?: number            
+  preview_url?: string
   total_sales: number
   total_revenue: number
   average_rating?: number
