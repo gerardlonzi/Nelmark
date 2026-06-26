@@ -17,14 +17,12 @@ CREATE TABLE product_badges (
   CONSTRAINT uq_product_badge UNIQUE (product_id, badge)
 );
 
+-- ✅ Après — sans WHERE NOW()
 CREATE INDEX idx_product_badges_active
-  ON product_badges(badge, score DESC)
-  WHERE expires_at > NOW();
+  ON product_badges(badge, score DESC, expires_at DESC);
 
 CREATE INDEX idx_product_badges_product
-  ON product_badges(product_id)
-  WHERE expires_at > NOW();
-
+  ON product_badges(product_id, expires_at DESC);
 ALTER TABLE product_badges ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "product_badges — public read"
@@ -88,7 +86,7 @@ WITH stats AS (
     p.seller_id, p.category_id, p.product_type
 )
 SELECT
-  s.*,
+  stats.*,
   RANK() OVER (ORDER BY composite_score DESC)
     AS global_rank,
   RANK() OVER (
@@ -101,7 +99,7 @@ SELECT
   RANK() OVER (
     ORDER BY sales_last_7d DESC, composite_score DESC
   )                                              AS trending_rank
-FROM stats
+FROM stats s
 WITH DATA;
 
 CREATE UNIQUE INDEX idx_top_products_id
